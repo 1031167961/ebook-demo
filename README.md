@@ -1,4 +1,4 @@
-# test-demo
+# vue-read-demo
 
 ## Project setup
 ```
