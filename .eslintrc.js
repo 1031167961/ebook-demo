@@ -4,7 +4,7 @@ module.exports = {
     node: true
   },
   extends: [
-    'plugin:vue/vue3-essential',
+    'plugin:vue/essential',
     '@vue/standard'
   ],
   parserOptions: {
@@ -12,6 +12,12 @@ module.exports = {
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    indent: 'off',
+    'space-before-function-paren': 'off',
+    'prefer-const': 'off',
+    'no-multiple-empty-lines': 'off',
+    'quote-props': 'off',
+    'object-curly-spacing': 'off'
   }
 }
