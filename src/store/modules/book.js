@@ -8,7 +8,7 @@ const book = {
     }
   },
   actions: {
-    setTest: ({ commit, state}, newTest) => {
+    setTest: ({ commit }, newTest) => {
       return commit('SET_TEST', newTest)
     }
   }

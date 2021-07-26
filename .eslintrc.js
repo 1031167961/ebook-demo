@@ -18,6 +18,8 @@ module.exports = {
     'prefer-const': 'off',
     'no-multiple-empty-lines': 'off',
     'quote-props': 'off',
-    'object-curly-spacing': 'off'
+    'object-curly-spacing': 'off',
+    'keyword-spacing': 'off',
+    'no-prototype-builtins': 'off'
   }
 }

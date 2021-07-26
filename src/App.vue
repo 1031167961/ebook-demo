@@ -6,10 +6,15 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
+
   export default {
+    computed: {
+      ...mapGetters(['test'])
+    },
     mounted() {
-      this.$store.dispatch('setTest', 0).then(() => {
-        console.log(this.$store.state.book.test)
+      this.$store.dispatch('setTest', 8).then(() => {
+        console.log(this.test)
       })
     }
   }
