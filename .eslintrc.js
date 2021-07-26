@@ -20,6 +20,7 @@ module.exports = {
     'quote-props': 'off',
     'object-curly-spacing': 'off',
     'keyword-spacing': 'off',
-    'no-prototype-builtins': 'off'
+    'no-prototype-builtins': 'off',
+    'no-unused-vars': 'off'
   }
 }
