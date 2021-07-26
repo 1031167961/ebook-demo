@@ -5,13 +5,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import Epub from 'epubjs'
+import {ebookMixin} from '../../utils/mixin'
 global.epub = Epub
 export default {
-  computed: {
-    ...mapGetters(['fileName'])
-  },
+  mixins: [ebookMixin],
   methods: {
     initEpub() { // 初始化电子书
       const url = 'http://10.8.134.55:9000/books/' + this.fileName + '.epub'
@@ -45,26 +43,34 @@ export default {
         event.stopPropagation() // 禁止事件进行传播
       }) // rendition.on()将事件绑定到iframe中
     },
-    // 上一页
-    prevPage() {
+    prevPage() { // 上一页
       if(this.renditions) {
-        this.renditions.prev()
+        this.renditions.prev() // 翻页
+        this.hideTitleAndMenu() // 隐藏菜单栏和工具栏
       }
     },
-    // 下一页
-    nextPage() {
+    nextPage() { // 下一页
       if(this.renditions) {
         this.renditions.next()
+        this.hideTitleAndMenu()
       }
     },
-    toggleTitleAndMenu() {
-      console.log('show title and menu')
+    toggleTitleAndMenu() { // 调整显示隐藏菜单栏和工具栏
+      // this.$store.dispatch('setMenuVisible', !this.menuVisible)
+      this.setMenuVisible(!this.menuVisible)
+    },
+    hideTitleAndMenu() { // 翻页时隐藏菜单栏和标题栏
+      // this.$store.dispatch('setMenuVisible', false)
+      this.setMenuVisible(false)
     }
   },
   mounted() {
     // 获取url中的路由并拆分
     const fileName = this.$route.params.fileName.split('|').join('/')
-    this.$store.dispatch('setFileName', fileName).then(() => {
+    // this.$store.dispatch('setFileName', fileName).then(() => {
+    //   this.initEpub()
+    // })
+    this.setFileName(fileName).then(() => {
       this.initEpub()
     })
   }
