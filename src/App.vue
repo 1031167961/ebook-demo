@@ -13,7 +13,7 @@
       ...mapGetters(['test'])
     },
     mounted() {
-      this.$store.dispatch('setTest', 8).then(() => {
+      this.$store.dispatch('setTest', 9).then(() => {
         console.log(this.test)
       })
     }
