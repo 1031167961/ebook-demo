@@ -56,12 +56,16 @@ export default {
       }
     },
     toggleTitleAndMenu() { // 调整显示隐藏菜单栏和工具栏
+      if(this.menuVisible) {
+        this.setSettingVisible(-1)
+      }
       // this.$store.dispatch('setMenuVisible', !this.menuVisible)
       this.setMenuVisible(!this.menuVisible)
     },
     hideTitleAndMenu() { // 翻页时隐藏菜单栏和标题栏
       // this.$store.dispatch('setMenuVisible', false)
       this.setMenuVisible(false)
+      this.setSettingVisible(-1)
     }
   },
   mounted() {
