@@ -17,6 +17,14 @@
         </div>
         <div class="preview" :style="{fontSize: fontSizeList[fontSizeList.length - 1].fontSize + 'px'}">A</div>
       </div>
+      <div class="setting-font-family" @click="showFontFamilyPopup">
+        <div class="setting-font-family-text-wrapper">
+          <span class="setting-font-family-text">{{defaultFontFamily}}</span>
+        </div>
+        <div class="setting-font-family-icon-wrapper">
+          <span class="icon-forward"></span>
+        </div>
+      </div>
     </div>
   </transition>
 </template>
@@ -33,8 +41,12 @@ export default {
     }
   },
   methods: {
-    setFontSize(fontSize) {
-      console.log(fontSize)
+    setFontSize(fontSize) { // 设置字号
+      this.setDefaultFontSize(fontSize)
+      this.currentBook.rendition.themes.fontSize(fontSize)
+    },
+    showFontFamilyPopup() { // 设置字体弹出弹出层
+      this.setFontFamilyVisible(true)
     }
   }
 }
@@ -46,13 +58,16 @@ export default {
   position: absolute;
   bottom: pr(48);
   left: 0;
+  display: flex;
+  flex-direction: column;
   z-index: 101;
   width: 100%;
   height: pr(90);
   background: #fff;
   box-shadow: 0 pr(-8) pr(8) rgba(0, 0, 0, 0.2);
-  // 字体设置
+  // 字号设置
   .setting-font-size {
+    flex: 2;
     display: flex;
     height: 100%;
     .preview {
@@ -111,6 +126,18 @@ export default {
           }
         }
       }
+    }
+  }
+  // 字体设置
+  .setting-font-family {
+    flex: 1;
+    font-size: pr(14);
+    @include center;
+    .setting-font-family-text-wrapper {
+      @include center;
+    }
+    .setting-font-family-icon-wrapper {
+      @include center;
     }
   }
 }

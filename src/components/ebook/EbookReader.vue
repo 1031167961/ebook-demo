@@ -14,20 +14,21 @@ export default {
     initEpub() { // 初始化电子书
       const url = 'http://10.8.134.55:9000/books/' + this.fileName + '.epub'
       this.book = new Epub(url)
+      this.setCurrentBook(this.book)
       console.log(this.book)
-      this.renditions = this.book.renderTo('read', {
+      this.rendition = this.book.renderTo('read', {
         width: innerWidth,
         height: innerHeight,
         method: 'default' // 微信兼容性配置
       })
-      this.renditions.display() // 渲染电子书
+      this.rendition.display() // 渲染电子书
       // 实现手势操作（滑动翻页）
-      this.renditions.on('touchstart', event => {
+      this.rendition.on('touchstart', event => {
         // console.log(event)
         this.touchStartX = event.changedTouches[0].clientX // 当前手指按下的X轴坐标
         this.touchStartTime = event.timeStamp // 当前手指按下的时间
       })
-      this.renditions.on('touchend', event => {
+      this.rendition.on('touchend', event => {
         // console.log(event)
         const offsetX = event.changedTouches[0].clientX - this.touchStartX // 手指离开屏幕时的X轴坐标-原来X轴坐标（即偏移量）
         const time = event.timeStamp - this.touchStartTime // 手指离开屏幕时的时间-原来时间（即手指滑动时间）
@@ -42,30 +43,43 @@ export default {
         event.preventDefault() // 禁用事件默认行为
         event.stopPropagation() // 禁止事件进行传播
       }) // rendition.on()将事件绑定到iframe中
+      this.rendition.hooks.content.register(contents => {
+        Promise.all([
+          // 使用环境变量，规定生产模式中的静态资源服务器地址（.env.development文件）
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+        ]).then(() => {
+          console.log('字体全部加载完毕...')
+        })
+      }) // 通过.rendition.hooks.content.register的钩子函数，将字体文件注入到epub的iframe中
     },
     prevPage() { // 上一页
-      if(this.renditions) {
-        this.renditions.prev() // 翻页
+      if(this.rendition) {
+        this.rendition.prev() // 翻页
         this.hideTitleAndMenu() // 隐藏菜单栏和工具栏
       }
     },
     nextPage() { // 下一页
-      if(this.renditions) {
-        this.renditions.next()
+      if(this.rendition) {
+        this.rendition.next()
         this.hideTitleAndMenu()
       }
     },
     toggleTitleAndMenu() { // 调整显示隐藏菜单栏和工具栏
       if(this.menuVisible) {
-        this.setSettingVisible(-1)
+        this.setSettingVisible(-1) // 隐藏工具栏
+        this.setFontFamilyVisible(false) // 隐藏字体选择栏
       }
       // this.$store.dispatch('setMenuVisible', !this.menuVisible)
-      this.setMenuVisible(!this.menuVisible)
+      this.setMenuVisible(!this.menuVisible) // 隐藏菜单栏
     },
     hideTitleAndMenu() { // 翻页时隐藏菜单栏和标题栏
       // this.$store.dispatch('setMenuVisible', false)
-      this.setMenuVisible(false)
-      this.setSettingVisible(-1)
+      this.setMenuVisible(false) // 隐藏菜单栏
+      this.setSettingVisible(-1) // 隐藏工具栏
+      this.setFontFamilyVisible(false) // 隐藏字体选择栏
     }
   },
   mounted() {
