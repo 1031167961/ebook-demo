@@ -5,8 +5,10 @@
 </template>
 
 <script>
+import { getFontFamily, getFontSize, saveFontFamily, saveFontSize } from '../../utils/localStorage'
 import Epub from 'epubjs'
 import {ebookMixin} from '../../utils/mixin'
+
 global.epub = Epub
 export default {
   mixins: [ebookMixin],
@@ -21,7 +23,11 @@ export default {
         height: innerHeight,
         method: 'default' // 微信兼容性配置
       })
-      this.rendition.display() // 渲染电子书
+      this.rendition.display().then(() => { // rendition.display()渲染电子书
+        // 电子书渲染完成后初始化字体、字号
+        this.initFontSize()
+        this.initFontFamily()
+      })
       // 实现手势操作（滑动翻页）
       this.rendition.on('touchstart', event => {
         // console.log(event)
@@ -54,6 +60,24 @@ export default {
           console.log('字体全部加载完毕...')
         })
       }) // 通过.rendition.hooks.content.register的钩子函数，将字体文件注入到epub的iframe中
+    },
+    initFontSize() { // 初始化字号设置
+      let fontSize = getFontSize(this.fileName)
+      if(!fontSize) {
+        saveFontSize(this.fileName, this.defaultFontSize)
+      } else {
+        this.rendition.themes.fontSize(fontSize)
+        this.setDefaultFontSize(fontSize)
+      }
+    },
+    initFontFamily() { // 初始化字体设置
+      let font = getFontFamily(this.fileName)
+      if(!font) {
+        saveFontFamily(this.fileName, this.defaultFontFamily) // 若本地缓存中没有字体设置，则将字体设置为默认字体
+      } else {
+        this.rendition.themes.font(font) // 页面渲染完成后，若本地缓存中有字体设置，则将字体设置为缓存中
+        this.setDefaultFontFamily(font) // 并修改vuex中默认字体
+      }
     },
     prevPage() { // 上一页
       if(this.rendition) {
