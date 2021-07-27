@@ -1,7 +1,11 @@
 import { mapActions, mapGetters } from 'vuex'
+import { themeList } from '../utils/book'
 
 export const ebookMixin = {
   computed: {
+    themeList() {
+      return themeList(this)
+    },
     ...mapGetters([
       'fileName',
       'menuVisible',

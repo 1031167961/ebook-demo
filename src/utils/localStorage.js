@@ -36,10 +36,12 @@ export function getBookObject(fileName, key) {
   }
 }
 
+// 获取默认语言
 export function getLocale() {
   return getLocalStorage('locale')
 }
 
+// 存储默认语言
 export function saveLocale(locale) {
   return setLocalStorage('locale', locale)
 }
@@ -105,15 +107,17 @@ export function getFontFamily(fileName) {
   return getBookObject(fileName, 'fontFamily')
 }
 
-// 设置字体缓存
+// 存储字体缓存
 export function saveFontFamily(fileName, fontFamily) {
   setBookObject(fileName, 'fontFamily', fontFamily)
 }
 
+// 获取主题缓存
 export function getTheme(fileName) {
   return getBookObject(fileName, 'theme')
 }
 
+// 存储主题缓存
 export function saveTheme(fileName, theme) {
   setBookObject(fileName, 'theme', theme)
 }
@@ -123,7 +127,7 @@ export function getFontSize(fileName) {
   return getBookObject(fileName, 'fontSize')
 }
 
-// 设置字号缓存
+// 存储字号缓存
 export function saveFontSize(fileName, fontSize) {
   setBookObject(fileName, 'fontSize', fontSize)
 }

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { getFontFamily, getFontSize, saveFontFamily, saveFontSize } from '../../utils/localStorage'
+import { getFontFamily, getFontSize, saveFontFamily, saveFontSize, getTheme, saveTheme } from '../../utils/localStorage'
 import Epub from 'epubjs'
 import {ebookMixin} from '../../utils/mixin'
 
@@ -24,7 +24,8 @@ export default {
         method: 'default' // 微信兼容性配置
       })
       this.rendition.display().then(() => { // rendition.display()渲染电子书
-        // 电子书渲染完成后初始化字体、字号
+        // 电子书渲染完成后初始化主题、字体、字号
+        this.initTheme()
         this.initFontSize()
         this.initFontFamily()
       })
@@ -78,6 +79,18 @@ export default {
         this.rendition.themes.font(font) // 页面渲染完成后，若本地缓存中有字体设置，则将字体设置为缓存中
         this.setDefaultFontFamily(font) // 并修改vuex中默认字体
       }
+    },
+    initTheme() { // 初始化主题
+      let defaultTheme = getTheme(this.fileName) // 获取缓存中的主题
+      if(!defaultTheme) { // 如果缓存中没有主题，初始化第一个主题为默认主题
+        defaultTheme = this.themeList[0].name
+        this.setDefaultTheme(defaultTheme) // 修改vuex中的默认主题
+        saveTheme(this.fileName, defaultTheme) // 将当前主题储存到缓存中
+      }
+      this.themeList.forEach(theme => { // 遍历themeList，并注册主题
+        this.rendition.themes.register(theme.name, theme.style)
+      })
+      this.rendition.themes.select(this.defaultTheme) // 设置初始化主题
     },
     prevPage() { // 上一页
       if(this.rendition) {
