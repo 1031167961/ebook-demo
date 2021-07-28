@@ -8,13 +8,14 @@
 import { getFontFamily, getFontSize, saveFontFamily, saveFontSize, getTheme, saveTheme } from '../../utils/localStorage'
 import Epub from 'epubjs'
 import {ebookMixin} from '../../utils/mixin'
+import { addCss } from '../../utils/book'
 
 global.epub = Epub
 export default {
   mixins: [ebookMixin],
   methods: {
     initEpub() { // 初始化电子书
-      const url = 'http://10.8.134.55:9000/books/' + this.fileName + '.epub'
+      const url = process.env.VUE_APP_RES_URL + '/books/' + this.fileName + '.epub'
       this.book = new Epub(url)
       this.setCurrentBook(this.book)
       console.log(this.book)
@@ -24,10 +25,11 @@ export default {
         method: 'default' // 微信兼容性配置
       })
       this.rendition.display().then(() => { // rendition.display()渲染电子书
-        // 电子书渲染完成后初始化主题、字体、字号
-        this.initTheme()
-        this.initFontSize()
-        this.initFontFamily()
+        // 电子书渲染完成后初始化样式
+        this.initTheme() // 电子书主题样式初始化（背景，文字颜色）
+        this.initGlobalStyle() // 全局主题样式初始化（菜单栏，工具栏等）
+        this.initFontSize() // 字号大小初始化
+        this.initFontFamily() // 字体样式初始化
       })
       // 实现手势操作（滑动翻页）
       this.rendition.on('touchstart', event => {
@@ -80,18 +82,19 @@ export default {
         this.setDefaultFontFamily(font) // 并修改vuex中默认字体
       }
     },
-    initTheme() { // 初始化主题
+    initTheme() { // 初始化电子书主题样式
       let defaultTheme = getTheme(this.fileName) // 获取缓存中的主题
       if(!defaultTheme) { // 如果缓存中没有主题，初始化第一个主题为默认主题
         defaultTheme = this.themeList[0].name
-        this.setDefaultTheme(defaultTheme) // 修改vuex中的默认主题
         saveTheme(this.fileName, defaultTheme) // 将当前主题储存到缓存中
       }
+      this.setDefaultTheme(defaultTheme) // 修改vuex中的默认主题
       this.themeList.forEach(theme => { // 遍历themeList，并注册主题
         this.rendition.themes.register(theme.name, theme.style)
       })
       this.rendition.themes.select(this.defaultTheme) // 设置初始化主题
     },
+    // 初始化全局样式写在mixin.js中
     prevPage() { // 上一页
       if(this.rendition) {
         this.rendition.prev() // 翻页
