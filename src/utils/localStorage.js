@@ -46,10 +46,12 @@ export function saveLocale(locale) {
   return setLocalStorage('locale', locale)
 }
 
+// 获取阅读进度
 export function getLocation(fileName) {
   return getBookObject(fileName, 'location')
 }
 
+// 存储阅读进度
 export function saveLocation(fileName, location) {
   setBookObject(fileName, 'location', location)
 }
@@ -62,10 +64,12 @@ export function saveBookmark(fileName, bookmark) {
   setBookObject(fileName, 'bookmark', bookmark)
 }
 
+// 获取阅读时间
 export function getReadTime(fileName) {
   return getBookObject(fileName, 'time')
 }
 
+// 存储阅读时间
 export function saveReadTime(fileName, theme) {
   setBookObject(fileName, 'time', theme)
 }

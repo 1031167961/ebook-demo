@@ -5,10 +5,9 @@
 </template>
 
 <script>
-import { getFontFamily, getFontSize, saveFontFamily, saveFontSize, getTheme, saveTheme } from '../../utils/localStorage'
+import { getFontFamily, getFontSize, saveFontFamily, saveFontSize, getTheme, saveTheme, getLocation } from '../../utils/localStorage'
 import Epub from 'epubjs'
-import {ebookMixin} from '../../utils/mixin'
-import { addCss } from '../../utils/book'
+import { ebookMixin } from '../../utils/mixin'
 
 global.epub = Epub
 export default {
@@ -19,18 +18,46 @@ export default {
       this.book = new Epub(url)
       this.setCurrentBook(this.book)
       console.log(this.book)
+      this.initRendition()
+      this.initGesture()
+      // 分页
+      this.book.ready.then(() => { // book解析完成后会调用ready方法
+        // 分页算法(粗略分页)
+        // 每页750字左右，根据屏幕宽度以及字体大小进行调整（但会受到字体样式以及图片等因素的影响，做不到精确分页）
+        return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16)).then(locations => {
+          console.log('进度加载完毕...')
+          this.setBookAvailable(true)
+          this.refreshLocation()
+        })
+      })
+    },
+    initRendition() { // 初始化rendition对象
       this.rendition = this.book.renderTo('read', {
         width: innerWidth,
         height: innerHeight,
         method: 'default' // 微信兼容性配置
       })
-      this.rendition.display().then(() => { // rendition.display()渲染电子书
+      const location = getLocation(this.fileName) // 获取缓存中location（阅读进度）的值，并传给自定义display()方法
+      this.display(location, () => { // 采用自定义display()方法
         // 电子书渲染完成后初始化样式
         this.initTheme() // 电子书主题样式初始化（背景，文字颜色）
         this.initGlobalStyle() // 全局主题样式初始化（菜单栏，工具栏等）
         this.initFontSize() // 字号大小初始化
         this.initFontFamily() // 字体样式初始化
       })
+      this.rendition.hooks.content.register(contents => {
+      Promise.all([
+        // 使用环境变量，规定生产模式中的静态资源服务器地址（.env.development文件）
+        contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
+        contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
+        contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
+        contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+      ]).then(() => {
+        console.log('字体全部加载完毕...')
+      })
+    }) // 通过.rendition.hooks.content.register的钩子函数，将字体文件注入到epub的iframe中
+    },
+    initGesture() { // 初始化手势操作
       // 实现手势操作（滑动翻页）
       this.rendition.on('touchstart', event => {
         // console.log(event)
@@ -52,17 +79,6 @@ export default {
         event.preventDefault() // 禁用事件默认行为
         event.stopPropagation() // 禁止事件进行传播
       }) // rendition.on()将事件绑定到iframe中
-      this.rendition.hooks.content.register(contents => {
-        Promise.all([
-          // 使用环境变量，规定生产模式中的静态资源服务器地址（.env.development文件）
-          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
-          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
-          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
-          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
-        ]).then(() => {
-          console.log('字体全部加载完毕...')
-        })
-      }) // 通过.rendition.hooks.content.register的钩子函数，将字体文件注入到epub的iframe中
     },
     initFontSize() { // 初始化字号设置
       let fontSize = getFontSize(this.fileName)
@@ -97,13 +113,17 @@ export default {
     // 初始化全局样式写在mixin.js中
     prevPage() { // 上一页
       if(this.rendition) {
-        this.rendition.prev() // 翻页
+        this.rendition.prev().then(() => { // 翻页
+          this.refreshLocation() // 将阅读进度存储到缓存中
+        })
         this.hideTitleAndMenu() // 隐藏菜单栏和工具栏
       }
     },
     nextPage() { // 下一页
       if(this.rendition) {
-        this.rendition.next()
+        this.rendition.next().then(() => {
+          this.refreshLocation() // 将阅读进度存储到缓存中
+        })
         this.hideTitleAndMenu()
       }
     },

@@ -26,8 +26,8 @@ export default {
     setTheme(index) {
       const theme = this.themeList[index]
       this.setDefaultTheme(theme.name).then(() => {
-        this.currentBook.rendition.themes.select(this.defaultTheme)
-        this.initGlobalStyle()
+        this.currentBook.rendition.themes.select(this.defaultTheme) // 设置阅读器样式
+        this.initGlobalStyle() // 同时设置全局样式
       })
       saveTheme(this.fileName, theme.name) // 将当前主题储存到缓存中
     }

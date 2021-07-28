@@ -7,9 +7,9 @@ const book = {
     defaultFontFamily: 'Default', // 默认字体
     fontFamilyVisible: false, // 控制字体设置栏是否显示
     defaultTheme: 'Default', // 控制默认主题
-    bookAvailable: false,
-    progress: 0,
-    section: 0,
+    bookAvailable: false, // 电子书是否可用（是否加载完毕）
+    progress: 0, // 存储进度信息，默认为0
+    section: 0, // 用于指定当前章节位置（目录）
     isPaginating: true,
     currentBook: null, // 电子书对象（this.book）
     navigation: null,
