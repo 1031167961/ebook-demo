@@ -134,12 +134,6 @@ export default {
       }
       // this.$store.dispatch('setMenuVisible', !this.menuVisible)
       this.setMenuVisible(!this.menuVisible) // 隐藏菜单栏
-    },
-    hideTitleAndMenu() { // 翻页时隐藏菜单栏和标题栏
-      // this.$store.dispatch('setMenuVisible', false)
-      this.setMenuVisible(false) // 隐藏菜单栏
-      this.setSettingVisible(-1) // 隐藏工具栏
-      this.setFontFamilyVisible(false) // 隐藏字体选择栏
     }
   },
   mounted() {

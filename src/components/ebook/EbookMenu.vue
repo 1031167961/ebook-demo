@@ -24,6 +24,8 @@
     <ebook-setting-theme></ebook-setting-theme>
     <!-- 进度条设置 -->
     <ebook-setting-progress></ebook-setting-progress>
+    <!-- 目录组件 -->
+    <ebook-slide></ebook-slide>
   </div>
 </template>
 
@@ -32,6 +34,7 @@ import EbookSettingFont from './EbookSettinfFont'
 import EbookSettingFontPopup from './EbookSettingFontPopup'
 import EbookSettingTheme from './EbookSettingTheme'
 import EbookSettingProgress from './EbookSettingProgress'
+import EbookSlide from './EbookSlide'
 
 import { ebookMixin } from '../../utils/mixin'
 export default {
@@ -40,7 +43,8 @@ export default {
     EbookSettingFont,
     EbookSettingFontPopup,
     EbookSettingTheme,
-    EbookSettingProgress
+    EbookSettingProgress,
+    EbookSlide
   },
   methods: {
     showSetting(key) {
