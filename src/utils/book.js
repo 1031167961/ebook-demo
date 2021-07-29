@@ -1,3 +1,5 @@
+import { getReadTime } from '../utils/localStorage'
+
 export const FONT_SIZE_LIST = [
   { fontSize: 12 },
   { fontSize: 14 },
@@ -64,4 +66,17 @@ export function removeAllCss() {
   removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_eye.css`)
   removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_gold.css`)
   removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
+}
+
+export function getReadTimeByMinute(fileName) { // 从内存中获取阅读时间，并转换成分钟
+  const readTime = getReadTime(fileName)
+  if(!readTime) {
+    return 0
+  } else {
+    return Math.ceil(readTime / 60)
+  }
+}
+
+export function flatten(arr) { // 将多维数组转换成一维数组（拆分章节信息）
+  return [].concat(...arr.map(item => [].concat(item, ...flatten(item.subitems))))
 }

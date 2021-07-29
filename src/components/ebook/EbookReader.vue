@@ -8,6 +8,7 @@
 import { getFontFamily, getFontSize, saveFontFamily, saveFontSize, getTheme, saveTheme, getLocation } from '../../utils/localStorage'
 import Epub from 'epubjs'
 import { ebookMixin } from '../../utils/mixin'
+import { flatten } from '../../utils/book'
 
 global.epub = Epub
 export default {
@@ -17,9 +18,9 @@ export default {
       const url = process.env.VUE_APP_RES_URL + '/books/' + this.fileName + '.epub'
       this.book = new Epub(url)
       this.setCurrentBook(this.book)
-      console.log(this.book)
       this.initRendition()
       this.initGesture()
+      console.log(this.book)
       // 分页
       this.book.ready.then(() => { // book解析完成后会调用ready方法
         // 分页算法(粗略分页)
@@ -30,6 +31,7 @@ export default {
           this.refreshLocation()
         })
       })
+      this.parseBook()
     },
     initRendition() { // 初始化rendition对象
       this.rendition = this.book.renderTo('read', {
@@ -111,6 +113,27 @@ export default {
       this.rendition.themes.select(this.defaultTheme) // 设置初始化主题
     },
     // 初始化全局样式写在mixin.js中
+    parseBook() { // 解析电子书内容
+      this.book.loaded.cover.then(cover => {
+        this.book.archive.createUrl(cover).then(url => {
+          this.setCover(url)
+        })
+      }) // 封面图片url
+      this.book.loaded.metadata.then(metadata => {
+        console.log(metadata)
+        this.setMetadata(metadata)
+      }) // 作者、标题等信息
+      this.book.loaded.navigation.then(nav => {
+        const navItem = flatten(nav.toc)
+        function find(item, level = 0) {
+          return !item.parent ? level : find(navItem.filter(parentItem => parentItem.id === item.parent)[0], ++level)
+        }
+        navItem.forEach(item => {
+          item.level = find(item)
+        })
+        this.setNavigation(navItem)
+      })
+    },
     prevPage() { // 上一页
       if(this.rendition) {
         this.rendition.prev().then(() => { // 翻页

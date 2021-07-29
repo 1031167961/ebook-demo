@@ -1,5 +1,5 @@
 import { mapActions, mapGetters } from 'vuex'
-import { themeList, addCss, removeAllCss } from '../utils/book'
+import { themeList, addCss, removeAllCss, getReadTimeByMinute } from '../utils/book'
 import { saveLocation } from '../utils/localStorage'
 
 export const ebookMixin = {
@@ -73,12 +73,14 @@ export const ebookMixin = {
     },
     refreshLocation() { // 章节切换完后调用，用来刷新当前位置
       const currentLocation = this.currentBook.rendition.currentLocation()
-      const startCfi = currentLocation.start.cfi
-      const progress = this.currentBook.locations.percentageFromCfi(startCfi)
-      // console.log(progress)
-      this.setProgress(Math.floor(progress * 100))
-      this.setSection(currentLocation.start.index)
-      saveLocation(this.fileName, startCfi) // 将阅读进度存储到缓存中
+      if(currentLocation && currentLocation.start) {
+        const startCfi = currentLocation.start.cfi
+        const progress = this.currentBook.locations.percentageFromCfi(startCfi)
+        // console.log('progress:' + progress)
+        this.setProgress(Math.floor(progress * 100))
+        this.setSection(currentLocation.start.index)
+        saveLocation(this.fileName, startCfi) // 将阅读进度存储到缓存中
+      }
     },
     display(target, cb) { // 自定义display()方法，代替epubjs中的rendition.display()渲染电子书
       if(target) {
@@ -98,6 +100,9 @@ export const ebookMixin = {
       this.setMenuVisible(false) // 隐藏菜单栏
       this.setSettingVisible(-1) // 隐藏工具栏
       this.setFontFamilyVisible(false) // 隐藏字体选择栏
+    },
+    getReadTimeText(fileName) { // 记录阅读时间
+      return this.$t('book.haveRead').replace('$1', getReadTimeByMinute(fileName))
     }
   }
 }

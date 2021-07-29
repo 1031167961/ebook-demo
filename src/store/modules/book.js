@@ -13,7 +13,7 @@ const book = {
     isPaginating: true,
     currentBook: null, // 电子书对象（this.book）
     navigation: null,
-    cover: null,
+    cover: null, // 书籍封面路径
     metadata: null,
     paginate: '',
     pagelist: null,

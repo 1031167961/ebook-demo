@@ -4,7 +4,7 @@
       <!-- 进度条设置 -->
       <div class="setting-progress">
         <div class="read-time-wrapper">
-          <span class="read-time-text">{{getReadTimeText()}}</span>
+          <span class="read-time-text">{{getReadTimeText(this.fileName)}}</span>
           <span class="icon-forward"></span>
         </div>
         <div class="progress-wrapper">
@@ -25,7 +25,7 @@
           </div>
         </div>
         <div class="text-wrapper">
-          <!-- <span class="progress-section-text">{{getSectionName}}</span> -->
+          <span class="progress-section-text">{{getSectionName}}</span>
           <span>{{bookAvailable ? progress + "%" : '加载中...'}}</span>
         </div>
       </div>
@@ -34,22 +34,15 @@
 </template>
 
 <script>
-import { getReadTime } from '../../utils/localStorage'
 import { ebookMixin } from '../../utils/mixin'
 
 export default {
   mixins: [ebookMixin],
-  // computed: {
-  //   getSectionName() {
-  //     if(this.section) {
-  //       const sectionInfo = this.currentBook.section(this.section)
-  //       if(sectionInfo && sectionInfo.href) {
-  //         console.log(this.currentBook.navigation.get(sectionInfo.href))
-  //         return this.currentBook.navigation.get(sectionInfo.href).label
-  //       } else return ''
-  //     }else return ''
-  //   }
-  // },
+  computed: {
+    getSectionName() {
+      return this.section ? this.navigation[this.section].label : ''
+    }
+  },
   methods: {
     onProgressChange(progress) { // 进度条拖动松手时调用的方法
       this.setProgress(progress).then(() => {
@@ -80,7 +73,6 @@ export default {
       if(this.section < this.currentBook.spine.length - 1 && this.bookAvailable) {
         this.setSection(this.section + 1).then(() => {
           this.displaySection()
-          // this.updateProgressBg()
         })
       }
     },
@@ -88,17 +80,6 @@ export default {
       const sectionInfo = this.currentBook.section(this.section)
       if(sectionInfo && sectionInfo.href) {
         this.display(sectionInfo.href)
-      }
-    },
-    getReadTimeText() { // 记录阅读时间
-      return this.$t('book.haveRead').replace('$1', this.getReadTimeByMinute())
-    },
-    getReadTimeByMinute() {
-      const readTime = getReadTime(this.fileName)
-      if(!readTime) {
-        return 0
-      } else {
-        return Math.ceil(readTime / 60)
       }
     }
   },
