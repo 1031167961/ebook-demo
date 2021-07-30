@@ -3,7 +3,7 @@
   <div class="slide-content-wrapper" v-show="menuVisible && settingVisible === 3">
     <transition name="slide-right">
       <div class="content" v-if="settingVisible === 3">
-        <div class="content-page-wrapper" v-if="!bookAvailable">
+        <div class="content-page-wrapper" v-if="bookAvailable">
           <div class="content-page">
             <!-- 组件显示位置 -->
             <component :is="currentTab === 1 ? content : bookmark"></component>

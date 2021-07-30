@@ -38,7 +38,7 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 101;
+  z-index: 210;
   display: flex;
   width: 100%;
   height: pr(48);

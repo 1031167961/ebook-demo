@@ -1,6 +1,7 @@
 <template>
  <div class="ebook-reader">
    <div id="read"></div>
+   <div class="ebook-reader-mask" @click="onMaskClick" @touchmove="move" @touchend="moveEnd"></div>
  </div>
 </template>
 
@@ -19,7 +20,7 @@ export default {
       this.book = new Epub(url)
       this.setCurrentBook(this.book)
       this.initRendition()
-      this.initGesture()
+      // this.initGesture()
       console.log(this.book)
       // 分页
       this.book.ready.then(() => { // book解析完成后会调用ready方法
@@ -157,6 +158,32 @@ export default {
       }
       // this.$store.dispatch('setMenuVisible', !this.menuVisible)
       this.setMenuVisible(!this.menuVisible) // 隐藏菜单栏
+    },
+    onMaskClick(e) { // 蒙板点击事件
+      const offsetX = e.offsetX
+      const width = window.innerWidth
+      if(offsetX > 0 && offsetX < width * 0.3) {
+        this.prevPage() // 点击左侧上一页
+      } else if(offsetX > 0 && offsetX > width * 0.7) {
+        this.nextPage() // 点击右侧下一页
+      } else {
+        this.toggleTitleAndMenu() // 点击中间调出菜单栏和工具栏
+      }
+      e.preventDefault() // 禁用事件默认行为
+      e.stopPropagation() // 禁止事件进行传播
+    },
+    move(e) {
+      let offsetY = 0
+      if(this.firstOffsetY) {
+        offsetY = e.changedTouches[0].clientY - this.firstOffsetY
+        this.setOffsetY(offsetY)
+      } else {
+        this.firstOffsetY = e.changedTouches[0].clientY
+      }
+    },
+    moveEnd(e) {
+      this.setOffsetY(0)
+      this.firstOffsetY = null
     }
   },
   mounted() {
@@ -174,4 +201,18 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 @import '../../assets/styles/global';
+.ebook-reader {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  .ebook-reader-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+  }
+}
 </style>

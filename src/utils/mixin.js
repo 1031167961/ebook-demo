@@ -1,6 +1,6 @@
 import { mapActions, mapGetters } from 'vuex'
 import { themeList, addCss, removeAllCss, getReadTimeByMinute } from '../utils/book'
-import { saveLocation } from '../utils/localStorage'
+import { saveLocation, getBookmark } from '../utils/localStorage'
 
 export const ebookMixin = {
   computed: {
@@ -76,10 +76,21 @@ export const ebookMixin = {
       if(currentLocation && currentLocation.start) {
         const startCfi = currentLocation.start.cfi
         const progress = this.currentBook.locations.percentageFromCfi(startCfi)
-        // console.log('progress:' + progress)
+        // console.log(progress)
         this.setProgress(Math.floor(progress * 100))
         this.setSection(currentLocation.start.index)
         saveLocation(this.fileName, startCfi) // 将阅读进度存储到缓存中
+        // 判断当前页是否为书签，获取书签信息
+        const bookmark = getBookmark(this.fileName)
+        if(bookmark) {
+          if(bookmark.some(item => item.cfi === startCfi)) {
+            this.setIsBookmark(true)
+          }else {
+            this.setIsBookmark(false)
+          }
+        } else {
+          this.setIsBookmark(false)
+        }
       }
     },
     display(target, cb) { // 自定义display()方法，代替epubjs中的rendition.display()渲染电子书

@@ -17,7 +17,7 @@ const book = {
     metadata: null,
     paginate: '',
     pagelist: null,
-    offsetY: 0,
+    offsetY: 0, // 鼠标在Y轴上下拉的偏移量（下拉书签功能使用）
     isBookmark: null
   },
   mutations: {

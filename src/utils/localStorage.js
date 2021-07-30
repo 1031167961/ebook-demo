@@ -56,10 +56,12 @@ export function saveLocation(fileName, location) {
   setBookObject(fileName, 'location', location)
 }
 
+// 获取书签信息
 export function getBookmark(fileName) {
   return getBookObject(fileName, 'bookmark')
 }
 
+// 存储书签信息
 export function saveBookmark(fileName, bookmark) {
   setBookObject(fileName, 'bookmark', bookmark)
 }
