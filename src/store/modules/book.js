@@ -15,8 +15,8 @@ const book = {
     navigation: null,
     cover: null, // 书籍封面路径
     metadata: null,
-    paginate: '',
-    pagelist: null,
+    paginate: '', // 存放书籍具体分页信息
+    pagelist: null, // 存放书籍页数信息
     offsetY: 0, // 鼠标在Y轴上下拉的偏移量（下拉书签功能使用）
     isBookmark: null
   },

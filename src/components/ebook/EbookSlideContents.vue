@@ -1,5 +1,6 @@
 <template>
  <div class="ebook-slide-contents">
+   <!-- 搜索栏 -->
    <div class="slide-contents-search-wrapper">
      <div class="slide-contents-search-input-wrapper">
        <div class="slide-contents-search-icon">
@@ -14,13 +15,18 @@
      </div>
      <div class="slide-contents-search-cancel" v-show="searchVisible" @click="hideSearchPage()">{{$t('book.cancel')}}</div>
    </div>
+   <!-- 书籍信息栏 -->
    <div class="slide-contents-book-wrapper" v-show="!searchVisible">
      <div class="slide-contents-book-img-wrapper">
        <img :src="cover" class="slide-contends-book-img" alt="">
      </div>
      <div class="slide-contents-book-info-wrapper">
-       <div class="slide-contents-book-title">{{metadata.title}}</div>
-       <div class="slide-contents-book-author">作者：{{metadata.creator}}</div>
+       <div class="slide-contents-book-title">
+         <span class="slide-contents-book-title-text">{{metadata.title}}</span>
+       </div>
+       <div class="slide-contents-book-author">
+         <span class="slide-contents-book-author-text">作者：{{metadata.creator}}</span>
+       </div>
      </div>
      <div class="slide-contents-book-progress-wrapper">
        <div class="slide-contents-book-progress">
@@ -30,12 +36,14 @@
        <div class="slide-contents-book-time">{{getReadTimeText(this.fileName)}}</div>
      </div>
    </div>
+   <!-- 目录组件 -->
    <scroll class="slide-contents-list" :top="156" :bottom="48" ref="scroll" v-show="!searchVisible">
      <div class="slide-contents-item" v-for="(item, index) in navigation" :key="index">
        <span class="slide-contents-item-label" :class="{'selected': section === index}" :style="contentItemStyle(item.level)" @click="displayContent(item.href)">{{item.label}}</span>
        <span class="slide-contents-item-page">{{item.page}}</span>
      </div>
    </scroll>
+   <!-- 搜索列表组件 -->
    <scroll class="slide-search-list" v-show="searchVisible" :top="66" :bottom="48">
      <div class="slide-search-item"
           v-for="(item, index) in searchList" :key="index"
@@ -161,16 +169,23 @@ export default {
       padding: 0 pr(10);
       box-sizing: border-box;
       .slide-contents-book-title {
-        width: pr(153.75);
+        // width: pr(153.75);
         font-size: pr(14);
         line-height: pr(20);
         margin-top: pr(5);
-        @include ellipsis2(2);
+        @include left;
+        .slide-contents-book-title-text {
+          @include ellipsis2(3)
+        }
       }
       .slide-contents-book-author {
-        width: pr(153.75);
+        // width: pr(153.75);
         font-size: pr(12);
-        @include ellipsis;
+        line-height: pr(14);
+        @include left;
+        .slide-contents-book-author-text {
+          @include ellipsis2(1);
+        }
       }
     }
     .slide-contents-book-progress-wrapper {
@@ -203,7 +218,11 @@ export default {
         line-height: pr(16);
         @include ellipsis;
       }
-      .slide-contents-item-page {}
+      .slide-contents-item-page {
+        flex: 0 0 pr(30);
+        font-size: pr(10);
+        @include right;
+      }
     }
   }
   .slide-search-list {

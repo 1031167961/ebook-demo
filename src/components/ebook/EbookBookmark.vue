@@ -152,7 +152,7 @@ export default {
       if(this.bookmark) {
         this.bookmark = this.bookmark.filter(item => item.cfi !== cfi)
         saveBookmark(this.fileName, this.bookmark)
-        this.isBookmark(false)
+        this.setIsBookmark(false)
       }
     }
   }

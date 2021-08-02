@@ -4,7 +4,10 @@ import { saveLocation, getBookmark } from '../utils/localStorage'
 
 export const ebookMixin = {
   computed: {
-    themeList() {
+    getSectionName() { // 章节标题
+      return this.section ? this.navigation[this.section].label : ''
+    },
+    themeList() { // 主题列表
       return themeList(this)
     },
     ...mapGetters([
@@ -76,7 +79,6 @@ export const ebookMixin = {
       if(currentLocation && currentLocation.start) {
         const startCfi = currentLocation.start.cfi
         const progress = this.currentBook.locations.percentageFromCfi(startCfi)
-        // console.log(progress)
         this.setProgress(Math.floor(progress * 100))
         this.setSection(currentLocation.start.index)
         saveLocation(this.fileName, startCfi) // 将阅读进度存储到缓存中
@@ -90,6 +92,18 @@ export const ebookMixin = {
           }
         } else {
           this.setIsBookmark(false)
+        }
+        // 分页处理
+        if(this.pagelist) {
+          const totalPage = this.pagelist.length
+          const currentPage = currentLocation.start.location
+          if(currentPage && currentPage > 0) { // 如果分页完成且页数信息大于0，就将具体分页信息传入vuex（paginate）中
+            this.setPaginate(currentPage + ' / ' + totalPage)
+          } else {
+            this.setPaginate('')
+          }
+        } else {
+          this.setPaginate('')
         }
       }
     },

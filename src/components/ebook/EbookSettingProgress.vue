@@ -38,11 +38,6 @@ import { ebookMixin } from '../../utils/mixin'
 
 export default {
   mixins: [ebookMixin],
-  computed: {
-    getSectionName() {
-      return this.section ? this.navigation[this.section].label : ''
-    }
-  },
   methods: {
     onProgressChange(progress) { // 进度条拖动松手时调用的方法
       this.setProgress(progress).then(() => {
@@ -154,6 +149,7 @@ export default {
       @include center;
       .progress-section-text {
         @include ellipsis;
+        line-height: pr(16);
       }
     }
   }
