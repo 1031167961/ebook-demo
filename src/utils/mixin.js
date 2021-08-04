@@ -2,6 +2,21 @@ import { mapActions, mapGetters } from 'vuex'
 import { themeList, addCss, removeAllCss, getReadTimeByMinute } from '../utils/book'
 import { saveLocation, getBookmark } from '../utils/localStorage'
 
+export const storeHomeMixin = {
+  computed: {
+    ...mapGetters([
+      'offsetY',
+      'hotSearchOffsetY'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'setOffsetY',
+      'setHotSearchOffsetY'
+    ])
+  }
+}
+
 export const ebookMixin = {
   computed: {
     getSectionName() { // 章节标题
