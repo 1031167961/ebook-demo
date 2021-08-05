@@ -6,6 +6,15 @@ $ratio: 375 / 10;
   @return $px / $ratio + rem;
 }
 
+@mixin absCenter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+}
+
 @mixin center {
   display: flex;
   justify-content: center;
@@ -21,6 +30,13 @@ $ratio: 375 / 10;
 @mixin right {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+}
+
+@mixin columnTop {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
 }
 
